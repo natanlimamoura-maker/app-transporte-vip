@@ -9,7 +9,9 @@
     <meta name="theme-color" content="#FBBF24">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png">
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3429/3429151.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3429/3429151.png" type="image/png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -27,7 +29,9 @@
         <button id="btnBack" onclick="showView('menu')" class="hidden-view bg-white/50 p-2 rounded-full shadow-inner active:scale-90 transition">
             <i data-lucide="chevron-left"></i>
         </button>
-        <h1 id="appTitle" class="text-lg font-black text-blue-900 mx-auto uppercase italic tracking-tighter">💎 App Transporte VIP</h1>
+        <div class="flex flex-col items-center mx-auto">
+            <h1 id="appTitle" class="text-lg font-black text-blue-900 uppercase italic tracking-tighter">💎 App Transporte VIP</h1>
+        </div>
         <button onclick="showView('config')" class="bg-blue-900/10 p-2 rounded-full text-blue-900 active:rotate-90 transition duration-300">
             <i data-lucide="settings"></i>
         </button>
@@ -56,11 +60,9 @@
     </main>
 
     <script>
-        // Dados Iniciais
         let alunos = JSON.parse(localStorage.getItem('@TransporteVIP:v1')) || [];
         let nomeApp = localStorage.getItem('@TransporteVIP:nome') || 'App Transporte VIP';
 
-        // Controle de Navegação
         function showView(view) {
             const menu = document.getElementById('view-menu');
             const content = document.getElementById('view-content');
@@ -82,7 +84,6 @@
             window.scrollTo(0,0);
         }
 
-        // Renderização de Telas
         function renderView(view) {
             const container = document.getElementById('view-content');
             const hoje = new Date().getDate();
@@ -91,94 +92,78 @@
                 container.innerHTML = `
                     <div class="bg-white p-6 rounded-3xl shadow-xl space-y-4 border-t-8 border-blue-700">
                         <h2 class="font-black text-center text-blue-900 uppercase">Novo Cadastro</h2>
-                        <input id="fNome" placeholder="Nome do Aluno" class="w-full border-2 p-4 rounded-2xl outline-none focus:border-yellow-400">
-                        <input id="fTel" placeholder="WhatsApp (DDD + Número)" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none focus:border-yellow-400">
-                        <input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none focus:border-yellow-400">
+                        <input id="fNome" placeholder="Nome do Aluno" class="w-full border-2 p-4 rounded-2xl outline-none">
+                        <input id="fTel" placeholder="WhatsApp (DDD + Número)" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none">
+                        <input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none">
                         <select id="fTipo" onchange="document.getElementById('fFinanceiro').classList.toggle('hidden', this.value === 'prefeitura')" class="w-full border-2 p-4 rounded-2xl font-bold bg-gray-50">
                             <option value="mensalista">Particular (Mensalista)</option>
                             <option value="prefeitura">Prefeitura / Municipal</option>
                         </select>
                         <div id="fFinanceiro" class="flex gap-2">
                             <input id="fValor" placeholder="Valor R$" type="number" class="flex-1 border-2 p-4 rounded-2xl">
-                            <input id="fVenc" placeholder="Venc. (Dia)" type="number" class="flex-1 border-2 p-4 rounded-2xl">
+                            <input id="fVenc" placeholder="Dia Venc." type="number" class="flex-1 border-2 p-4 rounded-2xl">
                         </div>
-                        <button onclick="salvarAluno()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg uppercase tracking-wider active:bg-emerald-700">Confirmar e Salvar</button>
+                        <button onclick="salvarAluno()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg uppercase">Salvar</button>
                     </div>`;
             } else if (view === 'config') {
                 container.innerHTML = `
                     <div class="space-y-4">
                         <div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900">
-                            <h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do Seu App</h2>
-                            <input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold focus:border-yellow-400 outline-none">
+                            <h2 class="font-black text-blue-900 uppercase text-xs mb-3 text-center">Configurar Nome</h2>
+                            <input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center">
                         </div>
                         <div class="bg-blue-900 p-6 rounded-3xl text-white space-y-4 shadow-xl">
-                            <h2 class="font-black text-yellow-400 uppercase text-xs text-center">Gerenciamento de Dados</h2>
-                            
-                            <button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center active:scale-95 transition">
+                            <h2 class="font-black text-yellow-400 uppercase text-xs text-center">Backup</h2>
+                            <button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center">
                                 <i data-lucide="download"></i> SALVAR BACKUP
                             </button>
-
-                            <label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold active:bg-white/20 transition">
+                            <label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold">
                                 <i data-lucide="upload"></i> RESTAURAR BACKUP
                                 <input type="file" id="importFile" class="hidden" onchange="importarBackup(event)">
                             </label>
-                            
-                            <p class="text-[10px] text-blue-300 text-center uppercase font-bold px-4 leading-tight">Ao restaurar, os dados atuais serão apagados pelos do arquivo.</p>
                         </div>
                     </div>`;
             } else if (view === 'balanco') {
                 const total = alunos.filter(a => a.tipo === 'mensalista' && a.pago).reduce((acc, c) => acc + Number(c.valor), 0);
-                const pendente = alunos.filter(a => a.tipo === 'mensalista' && !a.pago).reduce((acc, c) => acc + Number(c.valor), 0);
                 container.innerHTML = `
                     <div class="bg-white p-8 rounded-[40px] shadow-xl text-center border-t-8 border-emerald-600">
-                        <h2 class="font-black text-emerald-800 mb-6 uppercase italic text-xl tracking-tighter">Resumo Financeiro</h2>
-                        <div class="bg-emerald-50 p-8 rounded-[32px] border-2 border-emerald-100 mb-6">
-                            <p class="text-xs font-bold text-emerald-600 uppercase mb-2">Total Recebido</p>
-                            <p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p>
-                        </div>
-                        <div class="flex justify-between items-center px-2">
-                             <span class="text-[10px] font-black text-gray-400 uppercase">A receber</span>
-                             <span class="text-lg font-black text-red-500 italic">R$ ${pendente.toFixed(2)}</span>
-                        </div>
+                        <h2 class="font-black text-emerald-800 mb-6 uppercase italic">Caixa Recebido</h2>
+                        <p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p>
                     </div>`;
             } else {
-                // Filtros de Listagem
                 let lista = alunos;
                 if(view === 'mensalistas') lista = alunos.filter(a => a.tipo === 'mensalista');
                 if(view === 'prefeitura') lista = alunos.filter(a => a.tipo === 'prefeitura');
                 if(view === 'atrasados') lista = alunos.filter(a => !a.pago && a.tipo === 'mensalista' && Number(a.vencimento) < hoje);
 
                 container.innerHTML = `
-                    <h2 class="font-black text-gray-400 uppercase text-xs mb-4 ml-2 tracking-widest">${view}</h2>
                     <div class="space-y-3">
                         ${lista.length ? lista.map(a => `
-                            <div class="bg-white p-4 rounded-[24px] shadow-sm border-l-8 transition-all ${a.pago ? 'border-green-500' : 'border-red-500'}">
+                            <div class="bg-white p-4 rounded-[24px] shadow-sm border-l-8 ${a.pago ? 'border-green-500' : 'border-red-500'}">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <b class="uppercase text-sm block leading-tight text-slate-800">${a.nome}</b>
+                                        <b class="uppercase text-sm block">${a.nome}</b>
                                         <p class="text-[10px] text-blue-600 font-black uppercase italic">${a.escola}</p>
                                     </div>
-                                    <button onclick="excluir(${a.id})" class="text-gray-200 hover:text-red-300 p-1"><i data-lucide="trash-2" size="18"></i></button>
+                                    <button onclick="excluir(${a.id})" class="text-gray-200"><i data-lucide="trash-2" size="18"></i></button>
                                 </div>
                                 <div class="mt-4 flex gap-3">
-                                    <button onclick="togglePago(${a.id}, '${view}')" class="flex-1 p-3 rounded-xl text-[10px] font-black border-2 transition-all shadow-sm ${a.pago ? 'bg-green-600 text-white border-green-700' : 'text-red-500 border-red-500'}">
-                                        ${a.pago ? 'PAGAMENTO OK ✓' : 'MARCAR COMO PAGO'}
+                                    <button onclick="togglePago(${a.id}, '${view}')" class="flex-1 p-3 rounded-xl text-[10px] font-black border-2 ${a.pago ? 'bg-green-600 text-white border-green-700' : 'text-red-500 border-red-500'}">
+                                        ${a.pago ? 'PAGO ✓' : 'MARCAR PAGO'}
                                     </button>
-                                    <a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" class="bg-green-500 text-white p-3 rounded-xl px-5 flex items-center shadow-lg active:bg-green-600"><i data-lucide="phone" size="20"></i></a>
+                                    <a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" class="bg-green-500 text-white p-3 rounded-xl px-5 flex items-center shadow-lg"><i data-lucide="phone" size="20"></i></a>
                                 </div>
                             </div>
-                        `).join('') : '<p class="text-center text-gray-300 italic py-12">Nenhum registro nesta categoria.</p>'}
+                        `).join('') : '<p class="text-center text-gray-400 py-12">Nada por aqui.</p>'}
                     </div>`;
             }
             lucide.createIcons();
         }
 
-        // Funções de Ação
         function salvarAluno() {
             const nome = document.getElementById('fNome').value;
-            if(!nome) return alert("Por favor, digite o nome do aluno.");
-
-            const novo = {
+            if(!nome) return alert("Digite o nome");
+            alunos.push({
                 id: Date.now(),
                 nome: nome,
                 tel: document.getElementById('fTel').value,
@@ -187,24 +172,21 @@
                 valor: document.getElementById('fValor').value || 0,
                 vencimento: document.getElementById('fVenc').value || 0,
                 pago: false
-            };
-
-            alunos.push(novo);
-            atualizarLocalStorage();
+            });
+            localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
             showView('menu');
         }
 
         function togglePago(id, viewAtual) {
             alunos = alunos.map(a => a.id === id ? {...a, pago: !a.pago} : a);
-            atualizarLocalStorage();
+            localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
             renderView(viewAtual);
         }
 
         function excluir(id) {
-            if(confirm("Deseja apagar permanentemente este aluno?")) {
+            if(confirm("Excluir?")) {
                 alunos = alunos.filter(a => a.id !== id);
-                atualizarLocalStorage();
-                renderView('menu');
+                localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
                 showView('menu');
             }
         }
@@ -215,71 +197,39 @@
             document.getElementById('appTitle').innerText = "💎 " + val;
         }
 
-        function atualizarLocalStorage() {
-            localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
-        }
-
-        // SISTEMA DE BACKUP MELHORADO
         function exportarBackup() {
-            try {
-                const dados = JSON.stringify(alunos);
-                const blob = new Blob([dados], { type: "application/json" });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                
-                a.style.display = 'none';
-                a.href = url;
-                a.download = `backup_escolar_${new Date().toISOString().slice(0,10)}.json`;
-                
-                document.body.appendChild(a);
-                a.click();
-                
-                setTimeout(() => {
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                }, 100);
-            } catch (err) {
-                alert("Erro ao exportar: " + err);
-            }
+            const blob = new Blob([JSON.stringify(alunos)], { type: "application/json" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_escolar.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function importarBackup(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const conteudo = JSON.parse(e.target.result);
-                    if (Array.isArray(conteudo)) {
-                        if (confirm(`Restaurar ${conteudo.length} alunos? Isso substituirá seus dados atuais.`)) {
-                            alunos = conteudo;
-                            atualizarLocalStorage();
-                            alert("Backup restaurado com sucesso!");
-                            showView('menu');
-                        }
-                    } else {
-                        alert("Arquivo inválido.");
+                    const dados = JSON.parse(e.target.result);
+                    if (confirm("Restaurar dados?")) {
+                        alunos = dados;
+                        localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
+                        location.reload();
                     }
-                } catch (err) {
-                    alert("Erro ao ler arquivo: " + err);
-                }
+                } catch (err) { alert("Erro arquivo"); }
             };
             reader.readAsText(file);
         }
 
-        // Registro de Service Worker para Instalação PWA
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("Service Worker ativo"))
-                .catch(err => console.log("Erro SW", err));
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
         }
 
-        window.onload = () => { 
-            showView('menu'); 
-        };
+        window.onload = () => { showView('menu'); };
     </script>
 </body>
 </html>
