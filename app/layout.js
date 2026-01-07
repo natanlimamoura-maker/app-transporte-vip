@@ -1,6 +1,7 @@
 export const metadata = {
   title: 'App Transporte VIP',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
+  description: 'Sistema de gestão para transporte escolar',
+  manifest: '/manifest.json',
 }
 
 export default function RootLayout({ children }) {
@@ -8,9 +9,20 @@ export default function RootLayout({ children }) {
     <html lang="pt-br">
       <head>
         <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#FBBF24" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js');
+              });
+            }
+          `
+        }} />
       </head>
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }
