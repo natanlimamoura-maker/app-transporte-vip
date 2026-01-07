@@ -1,18 +1,15 @@
 {
   "name": "App Transporte VIP",
-  "short_name": "Transporte VIP",
-  "description": "Sistema de Gestão Escolar",
+  "short_name": "VIP",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#FBBF24",
   "theme_color": "#FBBF24",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
