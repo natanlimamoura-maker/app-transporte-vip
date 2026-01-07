@@ -1,8 +1,4 @@
-const CACHE_NAME = 'vip-v1';
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['/'])));
-});
-
-self.addEventListener('fetch', (e) => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('fetch', (event) => {
+  event.respondWith(fetch(event.request));
 });
