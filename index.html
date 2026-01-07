@@ -15,7 +15,6 @@
         .hidden-view { display: none; }
         .animate-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* Estilo da Marca d'água */
         .watermark {
             position: fixed;
             bottom: 20px;
@@ -42,9 +41,9 @@
                 <i data-lucide="lock" size="40"></i>
             </div>
             <h2 class="text-2xl font-black text-blue-900 mb-2 italic uppercase">Acesso VIP</h2>
-            <p class="text-xs text-gray-400 mb-6 font-bold uppercase tracking-tighter">Digite a senha de acesso</p>
-            <input id="inputSenha" type="password" placeholder="••••" class="w-full text-center text-3xl tracking-widest p-4 border-2 border-gray-100 rounded-2xl mb-4 outline-none focus:border-blue-900">
-            <button onclick="verificarSenha()" class="w-full bg-blue-900 text-white p-5 rounded-2xl font-black shadow-lg active:scale-95 transition">ENTRAR</button>
+            <p class="text-xs text-gray-400 mb-6 font-bold uppercase tracking-tighter">Digite a senha para liberar</p>
+            <input id="inputSenha" type="text" placeholder="SENHA" class="w-full text-center text-2xl font-black p-4 border-2 border-gray-100 rounded-2xl mb-4 outline-none focus:border-blue-900 uppercase">
+            <button onclick="verificarSenha()" class="w-full bg-blue-900 text-white p-5 rounded-2xl font-black shadow-lg active:scale-95 transition">LIBERAR APP</button>
         </div>
     </div>
 
@@ -52,17 +51,15 @@
         <div class="mb-4 text-blue-400 font-black tracking-[10px] text-xs uppercase">UPCODE</div>
         <i data-lucide="alert-octagon" size="80" class="text-red-500 mb-6 animate-pulse"></i>
         <h2 class="text-3xl font-black mb-4 uppercase italic leading-tight">Licença<br>Expirada!</h2>
-        <p class="text-lg mb-8 opacity-80 font-medium px-4">O período de uso terminou. Entre em contato para renovar.</p>
-        
+        <p class="text-lg mb-8 opacity-80 font-medium px-4">O período de 30 dias terminou. Entre em contato com o suporte UPCODE para renovar.</p>
         <div class="w-full max-w-xs space-y-4">
-            <a href="https://wa.me/5511953795473?text=Olá UPCODE, minha licença do App expirou." 
+            <a href="https://wa.me/5511953795473?text=Olá UPCODE, minha licença do App expirou e desejo renovar." 
                class="w-full bg-green-500 text-white p-5 rounded-3xl font-black shadow-xl flex items-center justify-center gap-3 active:scale-95 transition">
                <i data-lucide="message-circle"></i> FALAR COM SUPORTE
             </a>
-
             <div class="pt-10">
                 <input id="inputMaster" type="password" placeholder="Senha Master" class="w-full bg-blue-800 border-none p-3 rounded-xl text-center text-white placeholder-blue-400 outline-none mb-2">
-                <button onclick="renovarLicenca()" class="w-full bg-blue-700 text-blue-200 p-3 rounded-xl font-bold text-xs uppercase tracking-widest">Liberar Acesso</button>
+                <button onclick="renovarLicenca()" class="w-full bg-blue-700 text-blue-200 p-3 rounded-xl font-bold text-xs uppercase tracking-widest">Renovar Acesso</button>
             </div>
         </div>
     </div>
@@ -87,7 +84,7 @@
     </div>
 
     <script>
-        const SENHA_ACESSO = "1234";
+        const SENHA_ACESSO = "MEUAPP"; // Nova Senha Definida
         const SENHA_MASTER = "admin99";
         const DIAS_PARA_EXPIRAR = 30;
 
@@ -120,7 +117,8 @@
         }
 
         function verificarSenha() {
-            if (document.getElementById('inputSenha').value === SENHA_ACESSO) {
+            const digitada = document.getElementById('inputSenha').value.toUpperCase();
+            if (digitada === SENHA_ACESSO) {
                 document.getElementById('view-login').classList.add('hidden-view');
                 document.getElementById('app-content').classList.remove('hidden-view');
                 lucide.createIcons();
@@ -157,7 +155,7 @@
             if (view === 'cadastro') {
                 container.innerHTML = `<div class="bg-white p-6 rounded-[32px] shadow-xl space-y-4 border-t-8 border-blue-900"><h2 class="font-black text-center text-blue-900 uppercase italic">Novo Aluno</h2><input id="fNome" placeholder="Nome" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fTel" placeholder="WhatsApp" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none"><select id="fTipo" onchange="document.getElementById('fFin').classList.toggle('hidden', this.value === 'prefeitura')" class="w-full border-2 p-4 rounded-2xl font-bold bg-gray-50"><option value="mensalista">Particular</option><option value="prefeitura">Prefeitura</option></select><div id="fFin" class="flex gap-2"><input id="fValor" placeholder="R$" type="number" class="flex-1 border-2 p-4 rounded-2xl"><input id="fVenc" placeholder="Dia" type="number" class="flex-1 border-2 p-4 rounded-2xl"></div><button onclick="salvarAluno()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg">SALVAR</button></div>`;
             } else if (view === 'config') {
-                container.innerHTML = `<div class="space-y-4"><div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center"><h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2><input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center"></div><div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center"><h2 class="font-black text-yellow-400 uppercase text-xs">Backup</h2><button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center"><i data-lucide="download"></i> SALVAR</button><label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR<input type="file" id="importFile" class="hidden" onchange="importarBackup(event)"></label><div class="text-[8px] opacity-10 pt-4 tracking-widest">LICENÇA CONTROLADA POR UPCODE</div></div></div>`;
+                container.innerHTML = `<div class="space-y-4"><div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center"><h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2><input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center"></div><div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center"><h2 class="font-black text-yellow-400 uppercase text-xs">Backup</h2><button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center"><i data-lucide="download"></i> SALVAR</button><label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR<input type="file" id="importFile" class="hidden" onchange="importarBackup(event)"></label></div></div>`;
             } else if (view === 'balanco') {
                 const total = alunos.filter(a => a.tipo === 'mensalista' && a.pago).reduce((acc, c) => acc + Number(c.valor), 0);
                 container.innerHTML = `<div class="bg-white p-8 rounded-[40px] shadow-xl text-center border-t-8 border-emerald-600"><h2 class="font-black text-emerald-800 mb-6 uppercase italic">Caixa</h2><p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p></div>`;
