@@ -73,17 +73,14 @@
         let alunos = JSON.parse(localStorage.getItem('@TransporteVIP:v1')) || [];
         let nomeApp = localStorage.getItem('@TransporteVIP:nome') || 'App Transporte VIP';
 
-        // 1. CHECA SE BLOQUEIA OU NÃO AO ABRIR
         function checarLicenca() {
             let inicio = localStorage.getItem('@TransporteVIP:inicio');
             if (!inicio) {
                 inicio = new Date().getTime();
                 localStorage.setItem('@TransporteVIP:inicio', inicio);
             }
-            
             const agora = new Date().getTime();
             const diasPassados = (agora - inicio) / (1000 * 60 * 60 * 24);
-
             if (diasPassados > DIAS_VALIDADE) {
                 document.getElementById('app-content').classList.add('hidden-view');
                 document.getElementById('view-bloqueio').classList.remove('hidden-view');
@@ -93,19 +90,14 @@
             return true;
         }
 
-        // 2. RENOVAÇÃO COM SENHA
         function renovarLicenca() {
-            const digitada = document.getElementById('inputMaster').value.toUpperCase();
-            if (digitada === SENHA_MESTRE) {
+            if (document.getElementById('inputMaster').value.toUpperCase() === SENHA_MESTRE) {
                 localStorage.setItem('@TransporteVIP:inicio', new Date().getTime());
                 alert("ACESSO RENOVADO!");
                 location.reload();
-            } else {
-                alert("SENHA INCORRETA");
-            }
+            } else { alert("SENHA INCORRETA"); }
         }
 
-        // 3. NAVEGAÇÃO
         function showView(view) {
             const menu = document.getElementById('view-menu');
             const content = document.getElementById('dynamic-content');
@@ -128,12 +120,47 @@
 
         function renderView(view) {
             const container = document.getElementById('dynamic-content');
-            const hoje = new Date().getDate();
-
             if (view === 'cadastro') {
                 container.innerHTML = `<div class="bg-white p-6 rounded-[32px] shadow-xl space-y-4 border-t-8 border-blue-900"><h2 class="font-black text-center text-blue-900 uppercase">Novo Aluno</h2><input id="fNome" placeholder="Nome" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fTel" placeholder="WhatsApp" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none"><select id="fTipo" onchange="document.getElementById('fFin').classList.toggle('hidden', this.value === 'prefeitura')" class="w-full border-2 p-4 rounded-2xl font-bold bg-gray-50"><option value="mensalista">Particular</option><option value="prefeitura">Prefeitura</option></select><div id="fFin" class="flex gap-2"><input id="fValor" placeholder="R$" type="number" class="flex-1 border-2 p-4 rounded-2xl"><input id="fVenc" placeholder="Dia" type="number" class="flex-1 border-2 p-4 rounded-2xl"></div><button onclick="salvarAlu()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg">SALVAR</button></div>`;
             } else if (view === 'config') {
-                container.innerHTML = `<div class="space-y-4"><div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center"><h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2><input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center"></div><div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center"><h2 class="font-black text-yellow-400 uppercase text-xs">Backup</h2><button onclick="exportarBak()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3"><i data-lucide="download"></i> SALVAR</button><label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR<input type="file" class="hidden" onchange="importarBak(event)"></label></div></div>`;
+                // LÓGICA DA LICENÇA PARA EXIBIÇÃO
+                const inicio = parseInt(localStorage.getItem('@TransporteVIP:inicio'));
+                const expiraEmMs = inicio + (DIAS_VALIDADE * 24 * 60 * 60 * 1000);
+                const expiraData = new Date(expiraEmMs);
+                const agora = new Date().getTime();
+                const restamMs = expiraEmMs - agora;
+                const restamDias = Math.ceil(restamMs / (1000 * 60 * 60 * 24));
+                const corStatus = restamDias <= 5 ? 'text-red-600 border-red-100 bg-red-50' : 'text-blue-900 border-blue-100 bg-white';
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-6 rounded-[32px] shadow-md border-2 ${corStatus} animate-in">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i data-lucide="shield-check" size="20"></i>
+                                <h2 class="font-black uppercase text-xs">Status da Licença</h2>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <p class="text-[10px] opacity-60 uppercase font-bold">Expira em:</p>
+                                    <p class="font-black text-lg">${expiraData.toLocaleDateString('pt-BR')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] opacity-60 uppercase font-bold">Restam:</p>
+                                    <p class="font-black text-2xl">${restamDias <= 0 ? 0 : restamDias} <span class="text-xs uppercase">Dias</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center">
+                            <h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2>
+                            <input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center">
+                        </div>
+                        <div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center">
+                            <h2 class="font-black text-yellow-400 uppercase text-xs">Backup de Segurança</h2>
+                            <button onclick="exportarBak()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3"><i data-lucide="download"></i> SALVAR</button>
+                            <label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR<input type="file" class="hidden" onchange="importarBak(event)"></label>
+                        </div>
+                    </div>`;
             } else if (view === 'balanco') {
                 const total = alunos.filter(a => a.tipo === 'mensalista' && a.pago).reduce((acc, c) => acc + Number(c.valor), 0);
                 container.innerHTML = `<div class="bg-white p-8 rounded-[40px] shadow-xl text-center border-t-8 border-emerald-600"><h2 class="font-black text-emerald-800 mb-6 uppercase italic">Caixa</h2><p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p></div>`;
@@ -141,7 +168,7 @@
                 let lista = alunos;
                 if(view === 'mensalistas') lista = alunos.filter(a => a.tipo === 'mensalista');
                 if(view === 'prefeitura') lista = alunos.filter(a => a.tipo === 'prefeitura');
-                if(view === 'atrasados') lista = alunos.filter(a => !a.pago && a.tipo === 'mensalista' && Number(a.vencimento) < hoje);
+                if(view === 'atrasados') lista = alunos.filter(a => !a.pago && a.tipo === 'mensalista' && Number(a.vencimento) < new Date().getDate());
                 container.innerHTML = `<div class="space-y-3">${lista.map(a => `<div class="bg-white p-4 rounded-[24px] shadow-sm border-l-8 ${a.pago ? 'border-green-500' : 'border-red-500'}"><div class="flex justify-between"><div><b class="uppercase text-sm">${a.nome}</b><p class="text-[10px] text-blue-600 font-black italic uppercase">${a.escola}</p></div><button onclick="excluir(${a.id})" class="text-gray-200"><i data-lucide="trash-2" size="18"></i></button></div><div class="mt-4 flex gap-3"><button onclick="togglePago(${a.id}, '${view}')" class="flex-1 p-3 rounded-xl text-[10px] font-black border-2 ${a.pago ? 'bg-green-600 text-white border-green-700' : 'text-red-500 border-red-500'}">${a.pago ? 'PAGO ✓' : 'PENDENTE'}</button><a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" class="bg-green-500 text-white p-3 rounded-xl px-5 flex items-center shadow-lg"><i data-lucide="phone" size="20"></i></a></div></div>`).join('') || '<p class="text-center py-12 opacity-30 italic">Vazio</p>'}</div>`;
             }
             lucide.createIcons();
@@ -178,8 +205,7 @@
         function exportarBak() {
             const blob = new Blob([JSON.stringify(alunos)], { type: "application/json" });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `backup.json`;
-            a.click();
+            const a = document.createElement('a'); a.href = url; a.download = `backup.json`; a.click();
         }
 
         function importarBak(event) {
@@ -193,7 +219,6 @@
             reader.readAsText(file);
         }
 
-        // INICIALIZAÇÃO
         window.onload = () => { 
             checarLicenca();
             lucide.createIcons();
