@@ -34,37 +34,21 @@
 
     <div class="watermark">Developed by UPCODE</div>
 
-    <div id="view-login" class="fixed inset-0 z-[100] bg-yellow-400 flex flex-col items-center justify-center p-8 animate-in">
-        <div class="bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-sm text-center relative overflow-hidden">
-            <div class="absolute -top-2 -right-10 bg-blue-900 text-white py-1 px-10 rotate-45 text-[8px] font-bold uppercase tracking-widest">UPCODE</div>
-            <div class="bg-blue-900 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg text-yellow-400">
-                <i data-lucide="lock" size="40"></i>
-            </div>
-            <h2 class="text-2xl font-black text-blue-900 mb-2 italic uppercase">Acesso VIP</h2>
-            <p class="text-xs text-gray-400 mb-6 font-bold uppercase tracking-tighter">Digite a senha para liberar</p>
-            <input id="inputSenha" type="text" placeholder="SENHA" class="w-full text-center text-2xl font-black p-4 border-2 border-gray-100 rounded-2xl mb-4 outline-none focus:border-blue-900 uppercase">
-            <button onclick="verificarSenha()" class="w-full bg-blue-900 text-white p-5 rounded-2xl font-black shadow-lg active:scale-95 transition">LIBERAR APP</button>
-        </div>
-    </div>
-
-    <div id="view-expirado" class="fixed inset-0 z-[200] bg-blue-900 hidden-view flex flex-col items-center justify-center p-8 text-center text-white">
+    <div id="view-expirado" class="fixed inset-0 z-[200] bg-blue-900 hidden-view flex flex-col items-center justify-center p-8 text-center text-white animate-in">
         <div class="mb-4 text-blue-400 font-black tracking-[10px] text-xs uppercase">UPCODE</div>
-        <i data-lucide="alert-octagon" size="80" class="text-red-500 mb-6 animate-pulse"></i>
-        <h2 class="text-3xl font-black mb-4 uppercase italic leading-tight">Licença<br>Expirada!</h2>
-        <p class="text-lg mb-8 opacity-80 font-medium px-4">O período de 30 dias terminou. Entre em contato com o suporte UPCODE para renovar.</p>
-        <div class="w-full max-w-xs space-y-4">
-            <a href="https://wa.me/5511953795473?text=Olá UPCODE, minha licença do App expirou e desejo renovar." 
-               class="w-full bg-green-500 text-white p-5 rounded-3xl font-black shadow-xl flex items-center justify-center gap-3 active:scale-95 transition">
-               <i data-lucide="message-circle"></i> FALAR COM SUPORTE
-            </a>
-            <div class="pt-10">
-                <input id="inputMaster" type="password" placeholder="Senha Master" class="w-full bg-blue-800 border-none p-3 rounded-xl text-center text-white placeholder-blue-400 outline-none mb-2">
-                <button onclick="renovarLicenca()" class="w-full bg-blue-700 text-blue-200 p-3 rounded-xl font-bold text-xs uppercase tracking-widest">Renovar Acesso</button>
-            </div>
+        <i data-lucide="lock" size="80" class="text-yellow-400 mb-6 animate-bounce"></i>
+        <h2 class="text-3xl font-black mb-4 uppercase italic leading-tight">Sistema<br>Bloqueado!</h2>
+        <p class="text-lg mb-8 opacity-80 font-medium px-4">Sua licença expirou. Entre em contato com o suporte para renovar o acesso.</p>
+        
+        <div class="w-full max-w-sm space-y-4 bg-white/10 p-6 rounded-[32px] border border-white/10">
+            <input id="inputMaster" type="text" placeholder="DIGITE A SENHA" class="w-full bg-white text-blue-900 p-4 rounded-2xl text-center font-black text-xl outline-none uppercase">
+            <button onclick="renovarLicenca()" class="w-full bg-yellow-400 text-blue-900 p-5 rounded-2xl font-black shadow-lg active:scale-95 transition">RENOVAR LICENÇA</button>
+            
+            <a href="https://wa.me/5511953795473" class="block text-xs text-blue-300 font-bold uppercase tracking-widest pt-4 italic">Suporte: 11 95379-5473</a>
         </div>
     </div>
 
-    <div id="app-content" class="hidden-view">
+    <div id="app-content">
         <header class="bg-yellow-400 p-6 rounded-b-[40px] shadow-lg mb-6 flex justify-between items-center border-b-4 border-yellow-500 sticky top-0 z-50">
             <button id="btnBack" onclick="showView('menu')" class="hidden-view bg-white/50 p-2 rounded-full"><i data-lucide="chevron-left"></i></button>
             <h1 id="appTitle" class="text-lg font-black text-blue-900 mx-auto uppercase italic tracking-tighter">💎 App Transporte VIP</h1>
@@ -84,47 +68,39 @@
     </div>
 
     <script>
-        const SENHA_ACESSO = "MEUAPP"; // Nova Senha Definida
-        const SENHA_MASTER = "admin99";
-        const DIAS_PARA_EXPIRAR = 30;
+        const SENHA_MESTRE = "MEUAPP";
+        const DIAS_VALIDADE = 30;
 
         let alunos = JSON.parse(localStorage.getItem('@TransporteVIP:v1')) || [];
         let nomeApp = localStorage.getItem('@TransporteVIP:nome') || 'App Transporte VIP';
 
-        function checarEstadoLicenca() {
-            let dataInicio = localStorage.getItem('@TransporteVIP:inicio');
-            if (!dataInicio) {
-                dataInicio = new Date().getTime();
-                localStorage.setItem('@TransporteVIP:inicio', dataInicio);
+        function checarLicenca() {
+            let inicio = localStorage.getItem('@TransporteVIP:inicio');
+            if (!inicio) {
+                inicio = new Date().getTime();
+                localStorage.setItem('@TransporteVIP:inicio', inicio);
             }
+            
             const agora = new Date().getTime();
-            const diasPassados = (agora - dataInicio) / (1000 * 60 * 60 * 24);
-            if (diasPassados > DIAS_PARA_EXPIRAR) {
-                document.getElementById('view-login').classList.add('hidden-view');
+            const diasPassados = (agora - inicio) / (1000 * 60 * 60 * 24);
+
+            if (diasPassados > DIAS_VALIDADE) {
                 document.getElementById('app-content').classList.add('hidden-view');
                 document.getElementById('view-expirado').classList.remove('hidden-view');
+                lucide.createIcons();
                 return false;
             }
             return true;
         }
 
         function renovarLicenca() {
-            if (document.getElementById('inputMaster').value === SENHA_MASTER) {
+            const digitada = document.getElementById('inputMaster').value.toUpperCase();
+            if (digitada === SENHA_MESTRE) {
                 localStorage.setItem('@TransporteVIP:inicio', new Date().getTime());
-                alert("RENOVADO POR UPCODE!");
+                alert("ACESSO LIBERADO POR MAIS 30 DIAS!");
                 location.reload();
-            } else { alert("Senha Master Inválida!"); }
-        }
-
-        function verificarSenha() {
-            const digitada = document.getElementById('inputSenha').value.toUpperCase();
-            if (digitada === SENHA_ACESSO) {
-                document.getElementById('view-login').classList.add('hidden-view');
-                document.getElementById('app-content').classList.remove('hidden-view');
-                lucide.createIcons();
             } else {
-                alert("Senha incorreta!");
-                document.getElementById('inputSenha').value = "";
+                alert("SENHA INVÁLIDA!");
             }
         }
 
@@ -153,18 +129,18 @@
             const hoje = new Date().getDate();
 
             if (view === 'cadastro') {
-                container.innerHTML = `<div class="bg-white p-6 rounded-[32px] shadow-xl space-y-4 border-t-8 border-blue-900"><h2 class="font-black text-center text-blue-900 uppercase italic">Novo Aluno</h2><input id="fNome" placeholder="Nome" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fTel" placeholder="WhatsApp" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none"><select id="fTipo" onchange="document.getElementById('fFin').classList.toggle('hidden', this.value === 'prefeitura')" class="w-full border-2 p-4 rounded-2xl font-bold bg-gray-50"><option value="mensalista">Particular</option><option value="prefeitura">Prefeitura</option></select><div id="fFin" class="flex gap-2"><input id="fValor" placeholder="R$" type="number" class="flex-1 border-2 p-4 rounded-2xl"><input id="fVenc" placeholder="Dia" type="number" class="flex-1 border-2 p-4 rounded-2xl"></div><button onclick="salvarAluno()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg">SALVAR</button></div>`;
+                container.innerHTML = `<div class="bg-white p-6 rounded-[32px] shadow-xl space-y-4 border-t-8 border-blue-900"><h2 class="font-black text-center text-blue-900 uppercase">Novo Aluno</h2><input id="fNome" placeholder="Nome" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fTel" placeholder="WhatsApp" type="tel" class="w-full border-2 p-4 rounded-2xl outline-none"><input id="fEscola" placeholder="Escola" class="w-full border-2 p-4 rounded-2xl outline-none"><select id="fTipo" onchange="document.getElementById('fFin').classList.toggle('hidden', this.value === 'prefeitura')" class="w-full border-2 p-4 rounded-2xl font-bold bg-gray-50"><option value="mensalista">Particular</option><option value="prefeitura">Prefeitura</option></select><div id="fFin" class="flex gap-2"><input id="fValor" placeholder="R$" type="number" class="flex-1 border-2 p-4 rounded-2xl"><input id="fVenc" placeholder="Dia" type="number" class="flex-1 border-2 p-4 rounded-2xl"></div><button onclick="salvarAluno()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg uppercase">Salvar Aluno</button></div>`;
             } else if (view === 'config') {
-                container.innerHTML = `<div class="space-y-4"><div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center"><h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2><input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center"></div><div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center"><h2 class="font-black text-yellow-400 uppercase text-xs">Backup</h2><button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center"><i data-lucide="download"></i> SALVAR</button><label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR<input type="file" id="importFile" class="hidden" onchange="importarBackup(event)"></label></div></div>`;
+                container.innerHTML = `<div class="space-y-4"><div class="bg-white p-6 rounded-3xl shadow-md border-t-4 border-blue-900 text-center"><h2 class="font-black text-blue-900 uppercase text-xs mb-3">Nome do App</h2><input onchange="mudarNome(this.value)" value="${nomeApp}" class="w-full border-2 p-4 rounded-2xl font-bold text-center"></div><div class="bg-blue-900 p-6 rounded-[32px] text-white space-y-4 shadow-xl text-center"><h2 class="font-black text-yellow-400 uppercase text-xs italic tracking-widest">Backup & Segurança</h2><button onclick="exportarBackup()" class="w-full bg-emerald-500 p-4 rounded-2xl font-bold flex justify-center gap-3 items-center"><i data-lucide="download"></i> SALVAR DADOS</button><label class="w-full bg-white/10 p-4 rounded-2xl border border-white/20 flex justify-center gap-3 items-center cursor-pointer font-bold"><i data-lucide="upload"></i> RESTAURAR DADOS<input type="file" id="importFile" class="hidden" onchange="importarBackup(event)"></label></div></div>`;
             } else if (view === 'balanco') {
                 const total = alunos.filter(a => a.tipo === 'mensalista' && a.pago).reduce((acc, c) => acc + Number(c.valor), 0);
-                container.innerHTML = `<div class="bg-white p-8 rounded-[40px] shadow-xl text-center border-t-8 border-emerald-600"><h2 class="font-black text-emerald-800 mb-6 uppercase italic">Caixa</h2><p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p></div>`;
+                container.innerHTML = `<div class="bg-white p-8 rounded-[40px] shadow-xl text-center border-t-8 border-emerald-600"><h2 class="font-black text-emerald-800 mb-6 uppercase italic">Caixa Recebido</h2><p class="text-5xl font-black text-emerald-700">R$ ${total.toFixed(2)}</p></div>`;
             } else {
                 let lista = alunos;
                 if(view === 'mensalistas') lista = alunos.filter(a => a.tipo === 'mensalista');
                 if(view === 'prefeitura') lista = alunos.filter(a => a.tipo === 'prefeitura');
                 if(view === 'atrasados') lista = alunos.filter(a => !a.pago && a.tipo === 'mensalista' && Number(a.vencimento) < hoje);
-                container.innerHTML = `<div class="space-y-3">${lista.map(a => `<div class="bg-white p-4 rounded-[24px] shadow-sm border-l-8 ${a.pago ? 'border-green-500' : 'border-red-500'}"><div class="flex justify-between"><div><b class="uppercase text-sm">${a.nome}</b><p class="text-[10px] text-blue-600 font-black italic uppercase">${a.escola}</p></div><button onclick="excluir(${a.id})" class="text-gray-200"><i data-lucide="trash-2" size="18"></i></button></div><div class="mt-4 flex gap-3"><button onclick="togglePago(${a.id}, '${view}')" class="flex-1 p-3 rounded-xl text-[10px] font-black border-2 ${a.pago ? 'bg-green-600 text-white border-green-700' : 'text-red-500 border-red-500'}">${a.pago ? 'PAGO ✓' : 'PENDENTE'}</button><a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" class="bg-green-500 text-white p-3 rounded-xl px-5 flex items-center shadow-lg"><i data-lucide="phone" size="20"></i></a></div></div>`).join('') || '<p class="text-center py-10 opacity-30 italic">Vazio</p>'}</div>`;
+                container.innerHTML = `<div class="space-y-3">${lista.map(a => `<div class="bg-white p-4 rounded-[24px] shadow-sm border-l-8 ${a.pago ? 'border-green-500' : 'border-red-500'}"><div class="flex justify-between"><div><b class="uppercase text-sm">${a.nome}</b><p class="text-[10px] text-blue-600 font-black italic uppercase">${a.escola}</p></div><button onclick="excluir(${a.id})" class="text-gray-200"><i data-lucide="trash-2" size="18"></i></button></div><div class="mt-4 flex gap-3"><button onclick="togglePago(${a.id}, '${view}')" class="flex-1 p-3 rounded-xl text-[10px] font-black border-2 ${a.pago ? 'bg-green-600 text-white border-green-700' : 'text-red-500 border-red-500'}">${a.pago ? 'PAGO ✓' : 'PENDENTE'}</button><a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" class="bg-green-500 text-white p-3 rounded-xl px-5 flex items-center shadow-lg"><i data-lucide="phone" size="20"></i></a></div></div>`).join('') || '<p class="text-center py-12 opacity-30 italic">Nenhum registro encontrado.</p>'}</div>`;
             }
             lucide.createIcons();
         }
@@ -184,7 +160,7 @@
         }
 
         function excluir(id) {
-            if(confirm("Excluir?")) {
+            if(confirm("Deseja excluir este aluno?")) {
                 alunos = alunos.filter(a => a.id !== id);
                 localStorage.setItem('@TransporteVIP:v1', JSON.stringify(alunos));
                 showView('menu');
@@ -200,7 +176,7 @@
         function exportarBackup() {
             const blob = new Blob([JSON.stringify(alunos)], { type: "application/json" });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `backup_escolar.json`;
+            const a = document.createElement('a'); a.href = url; a.download = `backup_transporte.json`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
 
@@ -216,7 +192,7 @@
         }
 
         window.onload = () => { 
-            checarEstadoLicenca();
+            checarLicenca();
             lucide.createIcons();
         };
     </script>
